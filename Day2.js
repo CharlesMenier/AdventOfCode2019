@@ -2,46 +2,40 @@ const data = '1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,1,9,19,1,5,19,23,1,6,23,27,1,27,
 
 const input = data.split(',').map(v => parseInt(v));
 
-input[1] = 12;
-input[2] = 2;
-
-const solve = input => {
+const solve = (noun, verb) => {
+    const inputTmp = [...input];
+    inputTmp[1] = noun;
+    inputTmp[2] = verb;
     let index = 0;
 
-    while(input[index] !== 99 && index <= input.length) {
-
-        const opcode = input[index];
-
-        console.log('Index', index, 'opcode', opcode);
+    while(inputTmp[index] !== 99 && index <= inputTmp.length) {
+        const opcode = inputTmp[index];
 
         if(opcode !== 99) {
-
-            const pos1 = input[index+1];
-            const pos2 = input[index+2];
-            const pos3 = input[index+3];
-
-            console.log('First value at ', pos1, ' : ', input[pos1]);
-            console.log('Second value at ', pos2, ' : ', input[pos2]);
-
+            const pos1 = inputTmp[index+1];
+            const pos2 = inputTmp[index+2];
+            const pos3 = inputTmp[index+3];
             if (opcode === 1) {
-                input[pos3] = input[pos1] + input[pos2];
-                console.log('Updated value at ', pos3, ' : ', input[pos3]);
+                inputTmp[pos3] = inputTmp[pos1] + inputTmp[pos2];
             }
-
             if (opcode === 2) {
-                input[pos3] = input[pos1] * input[pos2];
-                console.log('Updated value at ', pos3, ' : ', input[pos3]);
+                inputTmp[pos3] = inputTmp[pos1] * inputTmp[pos2];
             }
-
             index = index + 4;
-
-            console.log('New index,', index);
-        } else {
-            console.log('End');
         }
     }
-
-    return input[0];
+    return inputTmp[0];
 };
 
-console.log('Result: ', solve(input));
+const compute = () => {
+    for(let i = 0; i <= 99; i++) {
+        for(let j = 0; j <= 99; j++) {
+            if(solve(i, j) === 19690720) {
+                return 100 * i + j;
+            }
+        }
+    }
+};
+
+console.log('Result PART 1: ', solve(12, 2));
+console.log('Result PART 2: ', compute());
