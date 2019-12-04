@@ -7,7 +7,10 @@ const input = [142388, 128965, 137791, 93517, 98732, 83948, 64037, 124603, 61093
 
 const getFuelCost = value => Math.floor(value/3) - 2;
 
-const getRecursiveCost = value => getFuelCost(value) > 0 ? getFuelCost(value) + getRecursiveCost(getFuelCost(value)) : 0;
+const getRecursiveCost = value => {
+    const cost = getFuelCost(value);
+    return cost > 0 ? cost + getRecursiveCost(cost) : 0;
+};
 
 console.log('Result part 1: ', input.reduce((acc, curr) => acc + getFuelCost(curr), 0));
 console.log('Result part 2: ', input.reduce((acc, curr) => acc + getRecursiveCost(curr), 0));
