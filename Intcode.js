@@ -1,4 +1,4 @@
-const isDebug = true;
+const isDebug = false;
 
 const ACTIONS = {
     ADD: 1,

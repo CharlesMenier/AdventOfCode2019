@@ -18,4 +18,7 @@ const testPart1 = () => {
 
 };
 
+const part2 = () => console.log('Part 2:', ...Intcode.compute(parse(input), 2));
+
 testPart1();
+part2();
