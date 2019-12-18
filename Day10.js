@@ -89,12 +89,17 @@ const t4 = '.#..##.###...#######\n' +
     '###.##.####.##.#..##';
 
 
+const count = a => a.reduce((acc, val) => acc.concat(val), []).filter(a => a).length - 1;
+const diff = (a, b) => a.map((line, y) => line.map((bool, x) => bool && !b[y][x]));
+const angle = (a, b) => Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+
 const parse = data => data
     .split('\n')
     .map(line => line
         .split('')
         .map(a => a === '#')
     );
+
 
 
 const getPGCD = (a, b) => (a ? getPGCD(b % a, a) : b);
@@ -156,29 +161,33 @@ const findVisibleAsteroids = (asteroids, x, y) => {
         });
     });
 
-    //console.log('Found', visibleAsteroids.reduce((acc, val) => acc.concat(val), []).filter(a => a).length);
-
-    return visibleAsteroids.reduce((acc, val) => acc.concat(val), []).filter(a => a).length - 1;
+    return visibleAsteroids;
 
 };
 
 
 const findMaxVisibleAsteroids = asteroids => {
 
+    let coords;
     let max = 0;
 
     asteroids.forEach((line, y) => {
         line.forEach((isAsteroid, x) => {
             if(isAsteroid) {
-                const visible = findVisibleAsteroids(asteroids, x, y);
+                const visible = count(findVisibleAsteroids(asteroids, x, y));
+
                 if(visible > max) {
                     max = visible;
+                    coords = { x, y };
                 }
             }
         });
     });
 
-    return max;
+    return {
+        max,
+        coords,
+    };
 };
 
 
@@ -195,7 +204,7 @@ const printCurrentMap = (asteroids, current, coords) => {
                 // No asteroid at position
                 visual += ' . ';
             } else {
-                if (coords.x === x && coords.y === y) {
+                if (coords && coords.x === x && coords.y === y) {
                     // The current position we're checking
                     visual += '(X)';
                 } else {
@@ -204,19 +213,49 @@ const printCurrentMap = (asteroids, current, coords) => {
                 }
             }
         });
-        console.log(visual.normalize());
+        console.log(visual);
     })
+
+};
+
+
+const findDestructionOrder = (asteroids, x, y) => {
+
+    let visibleMap = findVisibleAsteroids(asteroids, x, y);
+
+
+
+
+
+    console.log('Starting map:');
+    printCurrentMap(asteroids, { x, y });
+
+    console.log('Visible map:');
+    const visible = findVisibleAsteroids(asteroids, x, y);
+    printCurrentMap(visible, { x, y });
+
+    console.log('diff');
+    printCurrentMap(diff(asteroids, visible), { x, y });
 
 };
 
 const testPart1 = () => {
 
-    //console.log('Should output 33 : ', findMaxVisibleAsteroids(parse(t1)));
-    //console.log('Should output 35 : ', findMaxVisibleAsteroids(parse(t2)));
-    //console.log('Should output 41 : ', findMaxVisibleAsteroids(parse(t3)));
-    //console.log('Should output 210 : ', findMaxVisibleAsteroids(parse(t4)));
+    console.log('Should output 33 : ', findMaxVisibleAsteroids(parse(t1)));
+    console.log('Should output 35 : ', findMaxVisibleAsteroids(parse(t2)));
+    console.log('Should output 41 : ', findMaxVisibleAsteroids(parse(t3)));
+    console.log('Should output 210 : ', findMaxVisibleAsteroids(parse(t4)));
 
     console.log('Part 1:', findMaxVisibleAsteroids(parse(input)));
 };
 
-testPart1();
+
+const testPart2 = () => {
+
+    console.log('Should output 802:', findDestructionOrder(parse(t4), 11, 13));
+
+    console.log('Angle', angle({x:0, y:1}, {x:2, y:1}));
+
+};
+
+testPart2();
