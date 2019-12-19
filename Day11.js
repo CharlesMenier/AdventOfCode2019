@@ -54,21 +54,47 @@ const findRobotPath = (program) => {
         if(outputs.length === 2) {
             [color, rotation] = outputs;
 
-            if(path.indexOf(o => o.x === pos.x && o.y === pos.y) < 0) {
-                path.push({...pos, color});
-            }
+            path.push({...pos, color});
 
             dir = getNextDirection(dir, rotation);
             pos = getNextPosition(pos, dir);
             inp = (path.find(p => p.x === pos.x && p.y === pos.y) || {color: 0}).color;
 
             outputs = [];
+
+            printRobotPath(path);
         }
     }
 
     return path;
 
 };
+
+const printRobotPath = path => {
+    const maxX = path.reduce((max, pos) => pos.x > max ? pos.x : max, 0);
+    const maxY = path.reduce((max, pos) => pos.y > max ? pos.y : max, 0);
+    const minX = path.reduce((min, pos) => pos.x < min ? pos.x : min, 999);
+    const minY = path.reduce((min, pos) => pos.y < min ? pos.y : min, 999);
+
+    const deltaX = Math.abs(minX);
+    const deltaY = Math.abs(minY);
+
+    console.log('ORIGIN IS (', minX, ',', minY, ')');
+
+    let visiblePath = new Array(
+        deltaY + Math.abs(maxY) + 1
+    ).fill(new Array(deltaX + Math.abs(maxX) + 1).fill(0));
+
+    path.forEach(pos => {
+        console.log('\n', pos);
+        console.log('before\n', visiblePath.join('\n'));
+        visiblePath[pos.y + deltaY][pos.x + deltaX] = visiblePath[pos.y + deltaY][pos.x + deltaX] + 1;
+        console.log('after\n', visiblePath.join('\n'));
+    });
+
+    //visiblePath.forEach(l => console.log(l.join(' ')));
+};
+
 
 const part1 = () => {
     console.log('Part1: ', findRobotPath(parse(input)).length/*.map(o => `${o.x}${o.y}${o.color}`)*/);
